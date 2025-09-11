@@ -2,10 +2,8 @@ package com.example.controllers;
 import com.example.dtos.CustomerDTO;
 import com.example.services.CustomerService;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -29,4 +27,14 @@ public class CustomerController {
     public HttpResponse<String> addCustomer(@Body CustomerDTO customerDTO){
         return customerService.save(customerDTO);
     }
+    @Delete("/{id}")
+    public HttpResponse<?> delete(Long id) {
+        customerService.delete(id);
+        return HttpResponse.ok("Deleted Successfully!");
+    }
+    @Put("/{id}")
+    public HttpResponse<String> update(Long id, @Body @Valid CustomerDTO customerDto) {
+        return customerService.update(id,customerDto);
+    }
+
 }

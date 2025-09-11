@@ -6,6 +6,7 @@ import com.example.repositories.CustomerRepository;
 import io.micronaut.http.HttpResponse;
 
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Optional;
@@ -44,14 +45,16 @@ public class CustomerService {
     public void delete(Long id) {
         customerRepository.deleteById(id);
     }
-    public Customer update(Long id, Customer updated) {
-        return customerRepository.findById(id)
+    @Transactional
+    public HttpResponse<String> update(Long id, CustomerDTO customerDTO) {
+         customerRepository.findById(id)
                 .map(existing -> {
-                    existing.setName(updated.getName());
-                    existing.setEmail(updated.getEmail());
+                    existing.setName(customerDTO.getName());
+                    existing.setEmail(customerDTO.getEmail());
                     return customerRepository.update(existing);
                 })
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
+         return  HttpResponse.ok("Updated Successfully!");
     }
 
 
