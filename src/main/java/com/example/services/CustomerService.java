@@ -5,6 +5,8 @@ import com.example.entities.Customer;
 import com.example.repositories.CustomerRepository;
 import io.micronaut.http.HttpResponse;
 
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.exceptions.HttpStatusException;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +42,9 @@ public class CustomerService {
                         .name(customer.getName())
                         .email(customer.getEmail())
                         .build()
-                );
+                ).or(() -> {
+                    throw new HttpStatusException(HttpStatus.NOT_FOUND, "Customer not found");
+                });
     }
     public void delete(Long id) {
         customerRepository.deleteById(id);
