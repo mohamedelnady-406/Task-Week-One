@@ -12,7 +12,7 @@ import java.util.Optional;
 @Controller("/customer")
 @RequiredArgsConstructor
 public class CustomerController {
-    final private CustomerService customerService;
+    private final  CustomerService customerService;
     @Get("/all")
     public List<CustomerDTO> getAll(){
         return customerService.findAll();
@@ -28,7 +28,7 @@ public class CustomerController {
         return customerService.save(customerDTO);
     }
     @Delete("/{id}")
-    public HttpResponse<?> delete(Long id) {
+    public HttpResponse<String> delete(Long id) {
         customerService.delete(id);
         return HttpResponse.ok("Deleted Successfully!");
     }
