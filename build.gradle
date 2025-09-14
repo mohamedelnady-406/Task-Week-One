@@ -26,7 +26,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.mysql:mysql-connector-j")
-    
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("io.micronaut:micronaut-http-client")
 }
 
 
@@ -81,6 +84,27 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport
+
+        jacoco {
+            // Exclude JDK and libraries from being instrumented
+            excludes = [
+                    "java.*",
+                    "javax.*",
+                    "jdk.*",
+                    "sun.*",
+                    "org.slf4j.*",
+                    "ch.qos.logback.*",
+                    "io.micronaut.*",
+                    "jakarta.*",
+                    "org.hibernate.*",
+                    "com.zaxxer.hikari.*"
+            ]
+        }
+    }
+
 }
 def jacocoReport = "${layout.buildDirectory.get().asFile}/reports/jacoco/test/jacocoTestReport.xml"
 sonar {
