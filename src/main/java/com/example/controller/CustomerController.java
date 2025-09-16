@@ -1,6 +1,7 @@
 package com.example.controller;
 import com.example.dtos.CustomerDTO;
 import com.example.service.CustomerService;
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ public class CustomerController {
 
     @Get("/{id}") /**
      no need @PathVariable like in Spring**/
-    public Optional<CustomerDTO> getCustomer(Long id){
+    public Optional<CustomerDTO> getCustomer(@PathVariable Long id){
         return customerService.findById(id);
     }
     @Post("/add")
@@ -28,7 +29,7 @@ public class CustomerController {
         return customerService.save(customerDTO);
     }
     @Delete("/{id}")
-    public HttpResponse<String> delete(Long id) {
+    public HttpResponse<String> delete(@PathVariable Long id) {
         customerService.delete(id);
         return HttpResponse.ok("Deleted Successfully!");
     }
