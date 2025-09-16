@@ -3,6 +3,7 @@ import com.example.dtos.CustomerDTO;
 import com.example.service.CustomerService;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,27 +16,29 @@ import java.util.Optional;
 public class CustomerController {
     private final  CustomerService customerService;
     @Get("/all")
-    public List<CustomerDTO> getAll(){
-        return customerService.getAllCustomers();
+    public HttpResponse<List<CustomerDTO>> getAll() {
+        List<CustomerDTO> customers = customerService.getAllCustomers();
+        return HttpResponse.ok(customers);
     }
 
-    @Get("/{id}") /**
-     no need @PathVariable like in Spring**/
-    public Optional<CustomerDTO> getCustomer(@PathVariable Long id){
-        return customerService.findById(id);
+    @Get("/{id}")
+    public HttpResponse<CustomerDTO> getCustomer(@PathVariable Long id) {
+        return customerService.findById(id)
+                .map(HttpResponse::ok)
+                .orElse(HttpResponse.status(HttpStatus.NOT_FOUND));
     }
     @Post("/add")
-    public HttpResponse<String> addCustomer(@Body CustomerDTO customerDTO){
-        return customerService.save(customerDTO);
+    public HttpResponse<?> addCustomer(@Body CustomerDTO customerDTO){
+        return customerService.addCustomer(customerDTO);
     }
     @Delete("/{id}")
-    public HttpResponse<String> delete(@PathVariable Long id) {
+    public HttpResponse<?> delete(@PathVariable Long id) {
         customerService.delete(id);
-        return HttpResponse.ok("Deleted Successfully!");
+        return HttpResponse.ok();
     }
     @Put("/{id}")
-    public HttpResponse<String> update(Long id, @Body @Valid CustomerDTO customerDto) {
-        return customerService.update(id,customerDto);
+    public HttpResponse<?> update(Long id, @Body @Valid CustomerDTO customerDto) {
+        return customerService.updateCustomer(id,customerDto);
     }
 
 }

@@ -27,9 +27,9 @@ public class CustomerService {
                 .toList();
     }
 
-    public HttpResponse<String> save(CustomerDTO customerDTO) {
+    public HttpResponse<?> addCustomer(CustomerDTO customerDTO) {
         customerRepositoryFacade.save(customerMapper.toEntity(customerDTO));
-        return HttpResponse.ok("customer saved successfully !");
+        return HttpResponse.ok("Customer registered!");
     }
     public Optional<CustomerDTO> findById(Long id) {
         return customerRepositoryFacade.findById(id)
@@ -45,7 +45,7 @@ public class CustomerService {
         customerRepositoryFacade.deleteById(id);
     }
     @Transactional
-    public HttpResponse<String> update(Long id, CustomerDTO customerDTO) {
+    public HttpResponse<?> updateCustomer(Long id, CustomerDTO customerDTO) {
         customerRepositoryFacade.findById(id)
                 .map(existing -> {
                     Customer merged=  customerMapper.updateCustomer(existing, customerDTO);
@@ -53,7 +53,7 @@ public class CustomerService {
                 })
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        return HttpResponse.ok("Updated Successfully!");
+        return HttpResponse.ok();
     }
 
 
