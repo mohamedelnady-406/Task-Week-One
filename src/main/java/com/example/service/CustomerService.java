@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dtos.CustomerDTO;
 import com.example.entity.Customer;
+import com.example.mapper.CustomerMapper;
 import com.example.repository.CustomerRepository;
 import io.micronaut.http.HttpResponse;
 
@@ -17,23 +18,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
 
-    public List<CustomerDTO> findAll(){
-        return  customerRepository.findAll()
+    public List<CustomerDTO> getAllCustomers() {
+        return customerRepository.findAll()
                 .stream()
-                .map(customer -> CustomerDTO.builder()
-                        .name(customer.getName())
-                        .email(customer.getEmail())
-                        .build()
-                )
+                .map(customerMapper::toDto)
                 .toList();
     }
-    public HttpResponse<String> save(CustomerDTO customerDTO){
-        Customer customer = Customer.builder().
-                email(customerDTO.getEmail()).
-                name(customerDTO.getName())
-                .build();
-        customerRepository.save(customer);
+
+    public HttpResponse<String> save(CustomerDTO customerDTO) {
+        customerRepository.save(customerMapper.toEntity(customerDTO));
         return HttpResponse.ok("customer saved successfully !");
     }
     public Optional<CustomerDTO> findById(Long id) {
@@ -51,14 +46,14 @@ public class CustomerService {
     }
     @Transactional
     public HttpResponse<String> update(Long id, CustomerDTO customerDTO) {
-         customerRepository.findById(id)
+        customerRepository.findById(id)
                 .map(existing -> {
-                    existing.setName(customerDTO.getName());
-                    existing.setEmail(customerDTO.getEmail());
-                    return customerRepository.update(existing);
+                    Customer merged=  customerMapper.updateCustomer(existing, customerDTO);
+                    return customerRepository.update(merged);
                 })
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
-         return  HttpResponse.ok("Updated Successfully!");
+
+        return HttpResponse.ok("Updated Successfully!");
     }
 
 

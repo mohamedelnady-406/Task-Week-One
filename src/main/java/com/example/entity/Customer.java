@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import io.micronaut.core.annotation.Introspected;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -11,6 +12,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Introspected
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

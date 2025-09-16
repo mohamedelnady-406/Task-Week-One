@@ -15,7 +15,7 @@ public class CustomerController {
     private final  CustomerService customerService;
     @Get("/all")
     public List<CustomerDTO> getAll(){
-        return customerService.findAll();
+        return customerService.getAllCustomers();
     }
 
     @Get("/{id}") /**
