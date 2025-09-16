@@ -1,7 +1,8 @@
 package com.example.controller;
 import com.example.dtos.CustomerDTO;
 import com.example.service.CustomerService;
-import io.micronaut.core.annotation.Introspected;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
@@ -16,8 +17,8 @@ import java.util.Optional;
 public class CustomerController {
     private final  CustomerService customerService;
     @Get("/all")
-    public HttpResponse<List<CustomerDTO>> getAll() {
-        List<CustomerDTO> customers = customerService.getAllCustomers();
+    public HttpResponse<Page<CustomerDTO>> getAll(Pageable pageable) {
+        Page<CustomerDTO> customers = customerService.getCustomers(pageable);
         return HttpResponse.ok(customers);
     }
 

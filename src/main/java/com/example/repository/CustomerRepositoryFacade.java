@@ -1,6 +1,8 @@
 package com.example.repository;
 
 import com.example.entity.Customer;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 
@@ -9,11 +11,11 @@ import java.util.Optional;
 
 @Singleton
 @RequiredArgsConstructor
-public class CustomerRespositoryFacade {
+public class CustomerRepositoryFacade {
     private final CustomerRepository customerRepository;
 
-    public List<Customer> findAll() {
-        return customerRepository.findAll();
+    public Page<Customer> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 
     public Optional<Customer> findById(Long id) {
