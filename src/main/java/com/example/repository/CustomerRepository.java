@@ -1,6 +1,6 @@
-package com.example.repositories;
+package com.example.repository;
 
-import com.example.entities.Customer;
+import com.example.entity.Customer;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 

@@ -1,4 +1,4 @@
-package com.example.controllers;
+package com.example.controller;
 
 import com.example.dtos.CustomerDTO;
 import io.micronaut.core.type.Argument;

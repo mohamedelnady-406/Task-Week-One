@@ -1,6 +1,6 @@
-package com.example.controllers;
+package com.example.controller;
 import com.example.dtos.CustomerDTO;
-import com.example.services.CustomerService;
+import com.example.service.CustomerService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.Valid;

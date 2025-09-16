@@ -1,8 +1,8 @@
-package com.example.services;
+package com.example.service;
 
 import com.example.dtos.CustomerDTO;
-import com.example.entities.Customer;
-import com.example.repositories.CustomerRepository;
+import com.example.entity.Customer;
+import com.example.repository.CustomerRepository;
 import io.micronaut.http.HttpResponse;
 
 import io.micronaut.http.HttpStatus;
