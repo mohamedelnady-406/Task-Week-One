@@ -43,6 +43,7 @@ public class CustomerService {
                 });
     }
     public void delete(Long id) {
+
         customerRepositoryFacade.deleteById(id);
     }
     @Transactional
@@ -54,7 +55,7 @@ public class CustomerService {
                 })
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        return HttpResponse.ok();
+        return HttpResponse.ok("Updated!");
     }
 
 

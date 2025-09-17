@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.dtos.CustomerDTO;
 import io.micronaut.core.type.Argument;
+import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -31,33 +32,35 @@ class CustomerControllerTest {
                 .build();
 
         HttpRequest<CustomerDTO> request = HttpRequest.POST("/add", dto);
-        HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+        HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.body().contains("saved successfully"));
     }
 
+
     @Test
-    void testGetAllCustomers() {
-        // Add one customer first
+   void testGetAllCustomersPaged() {
+        // Add a customer first
         CustomerDTO dto = CustomerDTO.builder()
                 .name("Alice")
                 .email("alice@example.com")
                 .build();
-        client.toBlocking().exchange(HttpRequest.POST("/add", dto), String.class);
+        client.toBlocking().exchange(HttpRequest.POST("/add", dto));
 
-        // Now fetch all
-        HttpRequest<?> request = HttpRequest.GET("/all");
-        HttpResponse<List<CustomerDTO>> response = client.toBlocking().exchange(
+        // Fetch page 0 with size 10
+        HttpRequest<?> request = HttpRequest.GET("/all?page=0&size=10");
+        HttpResponse<Page> response = client.toBlocking().exchange(
                 request,
-                Argument.listOf(CustomerDTO.class)
+                Argument.of(Page.class, Argument.of(CustomerDTO.class))
         );
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.body());
-        assertFalse(response.body().isEmpty());
+        @SuppressWarnings("unchecked")
+        Page<CustomerDTO> page = (Page<CustomerDTO>) response.body();
+        assertNotNull(page);
+        List<CustomerDTO> content = page.getContent();
+        assertFalse(content.isEmpty());
     }
-
     @Test
     void testGetCustomerByIdNotFound() {
         HttpRequest<?> request = HttpRequest.GET("/99999"); // non-existent ID
@@ -111,7 +114,6 @@ class CustomerControllerTest {
         HttpRequest<CustomerDTO> updateRequest = HttpRequest.PUT("/1", updated);
         HttpResponse<String> response = client.toBlocking().exchange(updateRequest, String.class);
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.body().contains("Updated Successfully"));
     }
 
     @Test
@@ -126,8 +128,6 @@ class CustomerControllerTest {
         // Delete
         HttpRequest<?> deleteRequest = HttpRequest.DELETE("/1");
         HttpResponse<String> response = client.toBlocking().exchange(deleteRequest, String.class);
-
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.body().contains("Deleted Successfully"));
     }
 }

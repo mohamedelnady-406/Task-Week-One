@@ -8,10 +8,6 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.Optional;
-
 @Controller("/customer")
 @RequiredArgsConstructor
 public class CustomerController {
@@ -33,9 +29,9 @@ public class CustomerController {
         return customerService.addCustomer(customerDTO);
     }
     @Delete("/{id}")
-    public HttpResponse<?> delete(@PathVariable Long id) {
+    public HttpResponse<String> delete(Long id) {
         customerService.delete(id);
-        return HttpResponse.ok();
+        return HttpResponse.ok("Deleted!");
     }
     @Put("/{id}")
     public HttpResponse<?> update(Long id, @Body @Valid CustomerDTO customerDto) {
