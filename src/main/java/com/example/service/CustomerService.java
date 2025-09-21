@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dtos.CustomerDTO;
 import com.example.entity.Customer;
+import com.example.kafka.CustomerEventProducer;
 import com.example.mapper.CustomerMapper;
 import com.example.repository.CustomerRepositoryFacade;
 import io.micronaut.data.model.Page;
@@ -14,7 +15,6 @@ import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -22,14 +22,18 @@ import java.util.Optional;
 public class CustomerService {
     private final CustomerRepositoryFacade customerRepositoryFacade;
     private final CustomerMapper customerMapper;
+    private final CustomerEventProducer producer;
 
     public Page<CustomerDTO> getCustomers(Pageable pageable) {
         return customerRepositoryFacade.findAll(pageable)
                 .map(customerMapper::toDto);
     }
 
+    @Transactional
     public HttpResponse<?> addCustomer(CustomerDTO customerDTO) {
-        customerRepositoryFacade.save(customerMapper.toEntity(customerDTO));
+        Customer cst = customerMapper.toEntity(customerDTO);
+        customerRepositoryFacade.save(cst);
+        producer.sendCustomerCreated("New Customer add: "+cst.toString());
         return HttpResponse.ok("Customer registered!");
     }
     public Optional<CustomerDTO> findById(Long id) {
