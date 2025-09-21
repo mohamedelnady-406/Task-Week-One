@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dtos.CustomerDTO;
 import com.example.entity.Customer;
+import com.example.jms.MessageProducer;
 import com.example.kafka.CustomerEventProducer;
 import com.example.mapper.CustomerMapper;
 import com.example.repository.CustomerRepositoryFacade;
@@ -23,6 +24,7 @@ public class CustomerService {
     private final CustomerRepositoryFacade customerRepositoryFacade;
     private final CustomerMapper customerMapper;
     private final CustomerEventProducer producer;
+    private final MessageProducer messageProducer;
 
     public Page<CustomerDTO> getCustomers(Pageable pageable) {
         return customerRepositoryFacade.findAll(pageable)
@@ -34,6 +36,7 @@ public class CustomerService {
         Customer cst = customerMapper.toEntity(customerDTO);
         customerRepositoryFacade.save(cst);
         producer.sendCustomerCreated("New Customer add: "+cst.toString());
+        messageProducer.send(cst.toString());
         return HttpResponse.ok("Customer registered!");
     }
     public Optional<CustomerDTO> findById(Long id) {
@@ -46,7 +49,7 @@ public class CustomerService {
                     throw new HttpStatusException(HttpStatus.NOT_FOUND, "Customer not found");
                 });
     }
-    public void delete(Long id) {
+    public void deleteCustomer(Long id) {
 
         customerRepositoryFacade.deleteById(id);
     }
