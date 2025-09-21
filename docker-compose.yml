@@ -44,18 +44,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-  rabbitmq:
-    image: rabbitmq:3.13-management   # includes management UI
-    container_name: rabbitmq
+  activemq:
+    image: apache/activemq-classic:5.18.3   # official Apache ActiveMQ Classic image
+    container_name: activemq
     networks: [my_network]
     ports:
-      - "5672:5672"   # AMQP (for JMS clients)
-      - "15672:15672" # Management Web UI
+      - "61616:61616"   # JMS/OpenWire
+      - "8161:8161"     # Web Console: http://localhost:8161
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: admin
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: ["CMD", "curl", "-f", "http://localhost:8161/admin/"]
       interval: 10s
       timeout: 5s
       retries: 10
+

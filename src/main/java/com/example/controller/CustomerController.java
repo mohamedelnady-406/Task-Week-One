@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomerController {
     private final  CustomerService customerService;
     @Get("/all")
-    public HttpResponse<Page<CustomerDTO>> getAll(Pageable pageable) {
+    public HttpResponse<Page<CustomerDTO>> getAllCustomers(Pageable pageable) {
         Page<CustomerDTO> customers = customerService.getCustomers(pageable);
         return HttpResponse.ok(customers);
     }
@@ -30,7 +30,7 @@ public class CustomerController {
     }
     @Delete("/{id}")
     public HttpResponse<String> delete(Long id) {
-        customerService.delete(id);
+        customerService.deleteCustomer(id);
         return HttpResponse.ok("Deleted!");
     }
     @Put("/{id}")

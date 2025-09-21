@@ -31,6 +31,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut.kafka:micronaut-kafka")
+    implementation("io.micronaut.jms:micronaut-jms-activemq-classic")
+
 }
 
 
