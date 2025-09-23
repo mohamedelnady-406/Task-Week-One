@@ -1,6 +1,8 @@
 package com.example.controller;
 
 import com.example.dtos.CustomerDTO;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.type.Argument;
 import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpRequest;
@@ -10,19 +12,66 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.kafka.KafkaContainer;
+import org.testcontainers.utility.DockerImageName;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
-class CustomerControllerTest {
+@Testcontainers(disabledWithoutDocker = true)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Property(name = "micronaut.http.client.read-timeout", value = "120s")
+class CustomerControllerTest implements TestPropertyProvider {
 
     @Inject
     @Client("/customer")
     HttpClient client;
+    @Container
+    static MySQLContainer<?> mysql =
+            new MySQLContainer<>("mysql:8.0")
+                    .withDatabaseName("testdb")
+                    .withUsername("test")
+                    .withPassword("test");
+
+    @Container
+    final KafkaContainer kafka =
+            new KafkaContainer(DockerImageName.parse("apache/kafka:3.7.0"));
+
+    @Container
+    final GenericContainer<?> activemq =
+            new GenericContainer<>(DockerImageName.parse("apache/activemq-classic:5.18.3"))
+                    .withExposedPorts(61616) .waitingFor(Wait.forListeningPort()); ;
+
+    @Override
+    public @NonNull Map<String, String> getProperties() {
+        // ensure both containers are running
+        if (!kafka.isRunning()) kafka.start();
+        if (!activemq.isRunning()) activemq.start();
+        if (!mysql.isRunning()) mysql.start();
+
+        String brokerUrl =
+                "tcp://" + activemq.getHost() + ":" + activemq.getMappedPort(61616);
+
+        Map<String,String> props = new HashMap<>();
+        props.put("kafka.bootstrap.servers", kafka.getBootstrapServers());
+        props.put("micronaut.jms.activemq.classic.connection-string", brokerUrl);
+        props.put("datasources.default.url", mysql.getJdbcUrl());
+        props.put("datasources.default.username", mysql.getUsername());
+        props.put("datasources.default.password", mysql.getPassword());
+        return props;
+    }
 
     @Test
     void testAddCustomer() {

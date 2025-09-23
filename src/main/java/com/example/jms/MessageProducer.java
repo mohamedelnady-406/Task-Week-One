@@ -1,7 +1,6 @@
 package com.example.jms;
 
 import io.micronaut.jms.annotations.JMSProducer;
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;

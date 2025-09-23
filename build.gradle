@@ -32,6 +32,12 @@ dependencies {
     testImplementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut.kafka:micronaut-kafka")
     implementation("io.micronaut.jms:micronaut-jms-activemq-classic")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.2")
+    testImplementation("org.testcontainers:kafka:1.20.2")
+    testImplementation("org.testcontainers:activemq:1.20.2")
+    testImplementation("commons-codec:commons-codec:1.16.0")
+    testImplementation ("org.testcontainers:mysql:1.20.3")
+
 
 }
 

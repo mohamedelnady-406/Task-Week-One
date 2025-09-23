@@ -59,4 +59,28 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    networks: [my_network]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: my_database
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  app:
+    build: .
+    container_name: micronaut-app
+    environment:
+      ACTIVEMQ_BROKER_URL: tcp://activemq:61616
+    depends_on:
+      mysql:
+        condition: service_healthy # wait for MySQL
+    networks: [my_network]
+    ports:
+      - "8080:8080"
