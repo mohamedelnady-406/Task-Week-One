@@ -6,10 +6,13 @@ import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 @Controller("/customer")
 @RequiredArgsConstructor
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class CustomerController {
     private final  CustomerService customerService;
     @Get("/all")
