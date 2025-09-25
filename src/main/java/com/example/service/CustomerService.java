@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dtos.CustomerDTO;
 import com.example.entity.Customer;
+import com.example.exception.CustomerNotFoundException;
 import com.example.jms.MessageProducer;
 import com.example.kafka.CustomerEventProducer;
 import com.example.mapper.CustomerMapper;
@@ -9,9 +10,6 @@ import com.example.repository.CustomerRepositoryFacade;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
-
-import io.micronaut.http.HttpStatus;
-import io.micronaut.http.exceptions.HttpStatusException;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +39,8 @@ public class CustomerService {
     }
     public Optional<CustomerDTO> findById(Long id) {
         return customerRepositoryFacade.findById(id)
-                .map(customer -> CustomerDTO.builder()
-                        .name(customer.getName())
-                        .email(customer.getEmail())
-                        .build()
-                ).or(() -> {
-                    throw new HttpStatusException(HttpStatus.NOT_FOUND, "Customer not found");
+                .map(customerMapper::toDto).or(() -> {
+                    throw new CustomerNotFoundException("Customer with id " + id + " not found");
                 });
     }
     public void deleteCustomer(Long id) {
@@ -60,7 +54,7 @@ public class CustomerService {
                     Customer merged=  customerMapper.updateCustomer(existing, customerDTO);
                     return customerRepositoryFacade.update(merged);
                 })
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
 
         return HttpResponse.ok("Updated!");
     }
