@@ -11,9 +11,9 @@ import io.micronaut.http.cookie.SameSite;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.rules.SecurityRule;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.time.Duration;
 import java.util.Map;
 
 @Controller
@@ -23,12 +23,10 @@ public class AuthController {
 
 
     @Secured(SecurityRule.IS_ANONYMOUS)
-    @Post("/login")
-    public HttpResponse<?> signIn(@Body UsernamePasswordCredentials creds){
+    @Post("/auth/login")
+    public HttpResponse<?> signIn(@Body @Valid UsernamePasswordCredentials creds) {
         String token = jwtService.generateToken(
-                creds.getUsername(),
-                Map.of("roles", "ROLE_USER")
-        );
+                creds.getUsername());
         return HttpResponse.ok(Map.of("access_token", token));
     }
 }

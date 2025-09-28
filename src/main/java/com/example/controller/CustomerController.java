@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 @Controller("/customer")
 @RequiredArgsConstructor
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured("ROLE_USER")
 public class CustomerController {
     private final  CustomerService customerService;
     @Get("/all")

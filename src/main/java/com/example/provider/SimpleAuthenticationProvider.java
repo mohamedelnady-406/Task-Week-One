@@ -8,6 +8,8 @@ import jakarta.inject.Singleton;
 
 import java.util.List;
 
+
+
 @Singleton
 public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
@@ -20,6 +22,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
     public @NonNull AuthenticationResponse authenticate(@NonNull AuthenticationRequest authRequest) {
         String identity = authRequest.getIdentity().toString();
         String secret   = authRequest.getSecret().toString();
+        System.out.println(String.format("Authenticating {%s} / {%s}", identity, secret));
         /*
         or check a database repository
         */

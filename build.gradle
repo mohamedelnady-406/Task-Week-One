@@ -26,6 +26,8 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security")          // core security filter chain
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.8")
+
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
     compileOnly("org.projectlombok:lombok")
@@ -42,7 +44,7 @@ dependencies {
     testImplementation("org.testcontainers:activemq:1.20.2")
     testImplementation("commons-codec:commons-codec:1.16.0")
     testImplementation ("org.testcontainers:mysql:1.20.3")
-
+    testImplementation("org.mockito:mockito-core:2.1.0")
 
 }
 
